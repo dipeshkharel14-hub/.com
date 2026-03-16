@@ -8,17 +8,17 @@
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- CORE STYLES --- */
+        /* --- BRAND BLACK CORE --- */
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #fcfaf7; 
-            color: #1a1a1a; 
+            background-color: #050505; 
+            color: #e5e5e5; 
             scroll-behavior: smooth;
             margin: 0;
             overflow-x: hidden;
         }
 
-        /* --- INTRO ANIMATION STYLES --- */
+        /* --- INTRO ANIMATION --- */
         #intro-overlay {
             position: fixed;
             inset: 0;
@@ -26,22 +26,10 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            background: radial-gradient(circle at 50% 40%, #1a1a1a 0%, #000 70%);
+            background: #000;
             z-index: 9999;
-            transition: opacity 1.5s ease, visibility 1.5s;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
             color: white;
-        }
-
-        #intro-overlay::before {
-            content: "";
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%);
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%,-50%);
-            animation: floatLight 6s ease-in-out infinite alternate;
         }
 
         #brand-name {
@@ -51,7 +39,6 @@
             opacity: 0;
             transform: translateY(20px);
             animation: rise 1.5s ease forwards;
-            z-index: 2;
             text-align: center;
         }
 
@@ -62,7 +49,6 @@
             margin: 20px 0;
             transform: scaleX(0);
             animation: expand 1.2s ease 1.2s forwards;
-            z-index: 2;
         }
 
         #tagline-text {
@@ -70,101 +56,101 @@
             letter-spacing: 3px;
             opacity: 0;
             animation: fadeIn 1.5s ease 1.8s forwards;
-            z-index: 2;
         }
 
-        @keyframes floatLight { from { transform: translate(-50%,-50%) scale(1); } to { transform: translate(-50%,-45%) scale(1.2); } }
+        .static-loading-box {
+            display: inline-block;
+            padding: 10px 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: white;
+            margin: 20px 0;
+            text-transform: uppercase;
+        }
+
         @keyframes rise { to { opacity: 1; transform: translateY(0); } }
         @keyframes expand { to { transform: scaleX(1); } }
         @keyframes fadeIn { to { opacity: 1; } }
 
-        /* --- MAIN WEBSITE STYLES --- */
-        .main-content {
-            opacity: 0;
-            transition: opacity 1s ease-in;
-        }
-        .main-content.visible { opacity: 1; }
+        /* --- MAIN SITE --- */
+        .main-content { opacity: 0; }
+        .main-content.visible { opacity: 1; transition: opacity 0.8s ease-in; }
 
-        @keyframes flashRed {
-            0%, 100% { background-color: #fcfaf7; }
-            50% { background-color: #ff4d4d; }
-        }
-        .error-blink { animation: flashRed 0.4s linear 5; }
+        header { background: radial-gradient(circle at center, #111 0%, #050505 100%); }
 
         .organic-shape {
             border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
             overflow: hidden;
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            display: block;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .organic-shape:hover { border-radius: 50%; transform: scale(1.03) rotate(2deg); }
+        .organic-shape:hover { border-radius: 50%; transform: scale(1.02) rotate(2deg); border-color: #eab308; }
 
-        .clickable-card { transition: all 0.4s ease; }
-        .clickable-card:hover { transform: translateY(-8px); filter: brightness(1.1); }
+        .clickable-card { 
+            transition: all 0.4s ease; 
+            background: #0d0d0d;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px;
+        }
+        .clickable-card:hover { transform: translateY(-8px); border-color: #eab308; background: #141414; }
 
-        .dark-section { background: linear-gradient(145deg, #1a1a1a, #2a2a2a); color: white; }
+        .dark-section { background: #080808; border-top: 1px solid #1a1a1a; border-bottom: 1px solid #1a1a1a; }
 
+        /* --- MODALS --- */
         .modal {
             display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.8); z-index: 2000;
+            background: rgba(0,0,0,0.95); z-index: 2000;
             align-items: center; justify-content: center; padding: 20px;
+            backdrop-filter: blur(10px);
         }
-        .static-loading-box {
-    display: inline-block;
-    padding: 10px 25px;
-    border: 1px solid rgba(255, 255, 255, 0.5); /* Semi-transparent white border */
-    border-radius: 4px; /* Slight rounding for a modern look */
-    font-size: 14px;
-    letter-spacing: 3px;
-    color: white;
-    margin: 20px 0;
-    text-transform: uppercase;
+        .modal-card { background: #111; border: 1px solid #222; color: white; }
+        .modal-input { background: #050505; border: 1px solid #333; color: white; border-radius: 12px; }
+
+        @keyframes flashRed {
+            0%, 100% { background-color: #050505; }
+            50% { background-color: #450a0a; }
         }
-        
+        .error-blink { animation: flashRed 0.4s linear 5; }
     </style>
 </head>
 <body>
 
     <div id="intro-overlay">
-    <div id="brand-name">DIPESH KHAREL</div>
-    <div id="line-divider"></div>
-    
-    <div class="static-loading-box">
-       plz wait LOADING WEBSITE...
+        <div id="brand-name">DIPESH KHAREL</div>
+        <div id="line-divider"></div>
+        <div class="static-loading-box">plz wait LOADING WEBSITE...</div>
+        <div id="tagline-text">CREATIVE • VISION • PRECISION</div>
     </div>
-
-    <div id="tagline-text">CREATIVE • VISION • PRECISION</div>
-    </div>
-    
 
     <div id="main-site" class="main-content">
-        
+
         <div id="inquiryModal" class="modal">
-            <div class="bg-white p-8 rounded-3xl max-w-md w-full shadow-2xl text-black">
+            <div class="modal-card p-8 rounded-3xl max-w-md w-full shadow-2xl">
                 <h2 class="text-2xl font-bold mb-4">Access Verification</h2>
                 <p class="text-sm text-gray-500 mb-6">Enter details to continue to special content.</p>
-                <input type="text" id="authName" placeholder="Full Name" class="w-full p-4 mb-4 border rounded-xl outline-yellow-500">
-                <input type="text" id="authPhone" placeholder="Phone Number" class="w-full p-4 mb-6 border rounded-xl outline-yellow-500">
-                <button onclick="verifyAccess()" class="w-full bg-yellow-500 text-black font-bold py-4 rounded-xl hover:bg-black hover:text-white transition">Verify Identity</button>
+                <input type="text" id="authName" placeholder="Full Name" class="modal-input w-full p-4 mb-4 outline-none focus:border-yellow-500">
+                <input type="text" id="authPhone" placeholder="Phone Number" class="modal-input w-full p-4 mb-6 outline-none focus:border-yellow-500">
+                <button onclick="verifyAccess()" class="w-full bg-yellow-500 text-black font-bold py-4 rounded-xl hover:bg-white transition">Verify Identity</button>
                 <button onclick="closeModal('inquiryModal')" class="w-full mt-4 text-gray-400 text-sm">Cancel</button>
             </div>
         </div>
 
         <div id="canvasModal" class="modal">
-            <div class="bg-white p-8 rounded-3xl max-w-5xl w-full h-[85vh] overflow-y-auto relative text-black">
+            <div class="modal-card p-8 rounded-3xl max-w-5xl w-full h-[85vh] overflow-y-auto relative">
                 <div class="flex justify-between items-start mb-8">
                     <div>
                         <h2 class="text-3xl font-bold">Public Digital Canvas</h2>
                         <p class="text-sm text-gray-400">Add files. Anyone can search or delete items.</p>
                     </div>
-                    <button onclick="closeModal('canvasModal')" class="text-4xl font-light hover:text-red-500 transition text-black">&times;</button>
+                    <button onclick="closeModal('canvasModal')" class="text-4xl font-light hover:text-red-500 text-white">&times;</button>
                 </div>
 
                 <div class="flex flex-col md:flex-row gap-4 mb-8">
-                    <input type="text" id="canvasSearch" onkeyup="filterCanvas()" placeholder="Search files by name..." class="flex-1 p-4 border border-gray-200 rounded-xl outline-yellow-500 shadow-sm">
+                    <input type="text" id="canvasSearch" onkeyup="filterCanvas()" placeholder="Search files by name..." class="modal-input flex-1 p-4 outline-none focus:border-yellow-500">
                     <input type="file" id="fileUpload" class="hidden" multiple onchange="handleFileUpload(this)">
-                    <label for="fileUpload" class="cursor-pointer bg-yellow-500 text-black px-6 py-4 rounded-xl font-bold flex items-center justify-center hover:bg-black hover:text-white transition">
+                    <label for="fileUpload" class="cursor-pointer bg-yellow-500 text-black px-6 py-4 rounded-xl font-bold flex items-center justify-center hover:bg-white transition">
                         + Add New File
                     </label>
                 </div>
@@ -174,7 +160,7 @@
             </div>
         </div>
 
-        <header class="h-screen flex flex-col items-center justify-center text-center px-4 bg-slate-100 relative overflow-hidden">
+        <header class="h-screen flex flex-col items-center justify-center text-center px-4 relative overflow-hidden">
             <div class="mb-8" data-aos="zoom-in" data-aos-duration="800">
                 <a href="https://dipeshkharel.qzz.io">
                     <img src="IMG_20260210_154148.png" alt="MD Logo" class="w-28 h-28 object-contain hover:rotate-12 transition-transform">
@@ -183,71 +169,70 @@
             </div>
 
             <div class="z-10" data-aos="fade-up" data-aos-delay="200">
-                <h1 class="text-6xl md:text-9xl font-extrabold mb-6 tracking-tighter">
+                <h1 class="text-6xl md:text-9xl font-extrabold mb-6 tracking-tighter text-white">
                     The Future <br><span class="text-yellow-600 italic">of Education</span>
                 </h1>
                 <div class="flex gap-4 justify-center">
-                    <a href="#explore" class="bg-yellow-500 text-black px-10 py-4 rounded-full font-bold text-lg hover:bg-black hover:text-white transition-all shadow-2xl">
+                    <a href="#explore" class="bg-yellow-500 text-black px-10 py-4 rounded-full font-bold text-lg hover:bg-white transition-all">
                         Open Explore
                     </a>
-                    <button onclick="openModal('canvasModal')" class="bg-white text-black border border-black/10 px-10 py-4 rounded-full font-bold text-lg hover:bg-yellow-500 transition-all shadow-xl">
+                    <button onclick="openModal('canvasModal')" class="bg-transparent text-white border border-white/20 px-10 py-4 rounded-full font-bold text-lg hover:bg-yellow-500 hover:text-black transition-all">
                         Public Canvas
                     </button>
                 </div>
             </div>
-            <div class="absolute -top-20 -right-20 w-80 h-80 bg-yellow-200 rounded-full blur-[120px] opacity-40 animate-pulse"></div>
+            <div class="absolute -top-20 -right-20 w-80 h-80 bg-yellow-500/10 rounded-full blur-[120px] animate-pulse"></div>
         </header>
 
         <section id="explore" class="py-32 px-8 max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
             <div data-aos="fade-right">
                 <h2 class="text-5xl font-bold text-yellow-600 mb-6">Step into your future</h2>
-                <p class="text-gray-500 text-xl mb-10 leading-relaxed">
+                <p class="text-gray-400 text-xl mb-10 leading-relaxed">
                     Experience education like never before. I am crafting a digital world at <strong>Cosmic International Academy</strong> that bridges science and technology.
                 </p>
-                <button onclick="openModal('inquiryModal')" class="group relative inline-flex items-center gap-2 bg-black text-white px-8 py-4 rounded-full font-bold overflow-hidden transition-all">
+                <button onclick="openModal('inquiryModal')" class="group relative inline-flex items-center gap-2 bg-yellow-500 text-black px-8 py-4 rounded-full font-bold overflow-hidden transition-all">
                     <span>special project😊</span>
-                    <div class="absolute inset-0 bg-yellow-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                 </button>
             </div>
             <div class="relative" data-aos="fade-left">
-                <div class="absolute inset-0 bg-yellow-500 rounded-3xl rotate-3 -z-10 opacity-20"></div>
-                <img src="https://via.placeholder.com/600x400" alt="Education" class="w-full rounded-3xl shadow-2xl">
+                <div class="absolute inset-0 bg-yellow-500/10 rounded-3xl rotate-3 -z-10"></div>
+                <img src="https://via.placeholder.com/600x400/111111/666666?text=Cosmic+Academy" alt="Education" class="w-full rounded-3xl shadow-2xl border border-white/5">
             </div>
         </section>
 
         <section class="py-24 px-8 max-w-7xl mx-auto">
             <div class="grid md:grid-cols-2 gap-16">
                 <div class="group" data-aos="zoom-in-right">
-                    <a href="https://www.flickr.com/photos/204219108@N07/shares/05L9U8a4mi" class="organic-shape aspect-square bg-gray-100 mb-8 overflow-hidden">
-                        <img src="IMG_20260211_191003.jpg" alt="Botanical Visit" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <a href="https://www.flickr.com/photos/204219108@N07/shares/05L9U8a4mi" class="organic-shape aspect-square bg-[#111] mb-8 block">
+                        <img src="IMG_20260211_191003.jpg" alt="Botanical Visit" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity">
                     </a>
-                    <h3 class="text-3xl font-bold italic tracking-tight">Botanical Garden Visit</h3>
-                    <p class="text-gray-400 mt-2">Captured Moments</p>
+                    <h3 class="text-3xl font-bold italic tracking-tight text-white">Botanical Garden Visit</h3>
+                    <p class="text-gray-500 mt-2">Captured Moments</p>
                 </div>
                 <div class="group" data-aos="zoom-in-left">
-                    <a href="https://dipeshkharel14-hub.github.io/many-many-happy-returns-of-the-day.../" class="organic-shape aspect-square bg-gray-100 mb-8 overflow-hidden">
-                        <img src="IMG_20260124_121801.png" alt="Birthday" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <a href="https://dipeshkharel14-hub.github.io/many-many-happy-returns-of-the-day.../" class="organic-shape aspect-square bg-[#111] mb-8 block">
+                        <img src="IMG_20260124_121801.png" alt="Birthday" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity">
                     </a>
-                    <h3 class="text-3xl font-bold italic tracking-tight text-right">Birthday wish</h3>
-                    <p class="text-right">share link to wish</p>
+                    <h3 class="text-3xl font-bold italic tracking-tight text-right text-white">Birthday wish</h3>
+                    <p class="text-right text-gray-500">share link to wish</p>
                 </div>
             </div>
         </section>
 
         <section class="py-32 px-8 dark-section">
             <div class="max-w-7xl mx-auto text-center">
-                <h2 class="text-5xl font-bold mb-10" data-aos="fade-down">Digital Collection</h2>
+                <h2 class="text-5xl font-bold mb-10 text-white" data-aos="fade-down">Digital Collection</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                    <a href="https://dipeshkharel14-hub.github.io/mr-dipesh/" class="block clickable-card" data-aos="fade-up" data-aos-delay="100">
-                        <img src="IMG_20250717_104433.jpg" class="h-80 w-full object-cover rounded-2xl mb-4 border border-white/10 shadow-2xl">
+                    <a href="https://dipeshkharel14-hub.github.io/mr-dipesh/" class="block clickable-card p-4" data-aos="fade-up">
+                        <img src="IMG_20250717_104433.jpg" class="h-80 w-full object-cover rounded-2xl mb-4 border border-white/10 opacity-70">
                         <h3 class="text-xl font-bold text-yellow-500">Data Vault</h3>
                     </a>
-                    <a href="https://dipeshkharel14-hub.github.io/open_system/" class="block clickable-card" data-aos="fade-up" data-aos-delay="200">
-                        <img src="IMG_20260210_154148.png" class="h-80 w-full object-cover rounded-2xl mb-4 border border-white/10 shadow-2xl">
+                    <a href="https://dipeshkharel14-hub.github.io/open_system/" class="block clickable-card p-4" data-aos="fade-up" data-aos-delay="100">
+                        <img src="IMG_20260210_154148.png" class="h-80 w-full object-cover rounded-2xl mb-4 border border-white/10 opacity-70">
                         <h3 class="text-xl font-bold text-green-500">Hacking Screen</h3>
                     </a>
-                    <a href="https://codepen.io/Dipesh-Kharel-the-sans/pen/KwMEGyL" class="block clickable-card" data-aos="fade-up" data-aos-delay="300">
-                        <img src="file_000000004c6471fdafee4839b7cf0ef9.png" class="h-80 w-full object-cover rounded-2xl mb-4 border border-white/10 shadow-2xl">
+                    <a href="https://codepen.io/Dipesh-Kharel-the-sans/pen/KwMEGyL" class="block clickable-card p-4" data-aos="fade-up" data-aos-delay="200">
+                        <img src="file_000000004c6471fdafee4839b7cf0ef9.png" class="h-80 w-full object-cover rounded-2xl mb-4 border border-white/10 opacity-70">
                         <h3 class="text-xl font-bold text-blue-400">Jarvis AI</h3>
                     </a>
                 </div>
@@ -255,31 +240,31 @@
         </section>
 
         <section class="py-32 px-8 max-w-7xl mx-auto">
-            <h2 class="text-5xl font-bold mb-16" data-aos="fade-right">Personal Space</h2>
+            <h2 class="text-5xl font-bold mb-16 text-white" data-aos="fade-right">Personal Space</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                <a href="https://dipeshkharel14-hub.github.io/Gesture/" class="block clickable-card group" data-aos="zoom-in" data-aos-delay="100">
-                    <img src="IMG_20250716_175344.jpg" class="h-80 w-full object-cover rounded-2xl group-hover:scale-105 transition shadow-lg">
-                    <p class="mt-4 font-bold text-gray-400">project gesture</p>
+                <a href="https://dipeshkharel14-hub.github.io/Gesture/" class="block clickable-card group p-2" data-aos="zoom-in">
+                    <img src="IMG_20250716_175344.jpg" class="h-80 w-full object-cover rounded-2xl opacity-80 group-hover:opacity-100 transition shadow-lg">
+                    <p class="mt-4 font-bold text-gray-500">project gesture</p>
                 </a>
-                <a href="#" class="block clickable-card group" data-aos="zoom-in" data-aos-delay="200">
-                    <img src="IMG_20250718_134847.jpg" class="h-80 w-full object-cover rounded-2xl group-hover:scale-105 transition shadow-lg">
-                    <p class="mt-4 font-bold text-gray-400">project 02</p>
+                <a href="#" class="block clickable-card group p-2" data-aos="zoom-in" data-aos-delay="100">
+                    <img src="IMG_20250718_134847.jpg" class="h-80 w-full object-cover rounded-2xl opacity-80 group-hover:opacity-100 transition shadow-lg">
+                    <p class="mt-4 font-bold text-gray-500">project 02</p>
                 </a>
-                <a href="#" class="block clickable-card group" data-aos="zoom-in" data-aos-delay="300">
-                    <img src="IMG_20260131_110243.png" class="h-80 w-full object-cover rounded-2xl group-hover:scale-105 transition shadow-lg">
-                    <p class="mt-4 font-bold text-gray-400">project 03</p>
+                <a href="#" class="block clickable-card group p-2" data-aos="zoom-in" data-aos-delay="200">
+                    <img src="IMG_20260131_110243.png" class="h-80 w-full object-cover rounded-2xl opacity-80 group-hover:opacity-100 transition shadow-lg">
+                    <p class="mt-4 font-bold text-gray-500">project 03</p>
                 </a>
-                <a href="#" class="block clickable-card group" data-aos="zoom-in" data-aos-delay="400">
-                    <img src="file_000000004c6471fdafee4839b7cf0ef9.png" class="h-80 w-full object-cover rounded-2xl group-hover:scale-105 transition shadow-lg">
-                    <p class="mt-4 font-bold text-gray-400">project 04</p>
+                <a href="#" class="block clickable-card group p-2" data-aos="zoom-in" data-aos-delay="300">
+                    <img src="file_000000004c6471fdafee4839b7cf0ef9.png" class="h-80 w-full object-cover rounded-2xl opacity-80 group-hover:opacity-100 transition shadow-lg">
+                    <p class="mt-4 font-bold text-gray-500">project 04</p>
                 </a>
             </div>
         </section>
 
-        <footer class="bg-black text-white py-32 px-8 text-center">
+        <footer class="bg-black text-white py-32 px-8 text-center border-t border-white/5">
             <div data-aos="fade-up">
                 <h2 class="text-4xl font-bold mb-8 italic">Let's build the future.</h2>
-                <a href="mailto:dipeshkharel14@gmail.com" class="bg-yellow-500 text-black px-12 py-5 rounded-full font-bold text-xl inline-block hover:shadow-[0_0_30px_rgba(234,179,8,0.5)] transition-all">
+                <a href="mailto:dipeshkharel14@gmail.com" class="bg-yellow-500 text-black px-12 py-5 rounded-full font-bold text-xl inline-block hover:shadow-[0_0_30px_rgba(234,179,8,0.3)] transition-all">
                     Send a Message
                 </a>
                 <div class="mt-20 opacity-30 text-xs tracking-[0.5em] uppercase">
@@ -291,24 +276,24 @@
 
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
-        // Intro Timeline
-        window.addEventListener('load', function() {
+        // Start transition exactly when script runs + 3.5s to ensure total is 4s
+        // This avoids waiting for the 'load' event which can be slow.
+        (function() {
             setTimeout(() => {
-                // Fade out intro
                 const intro = document.getElementById('intro-overlay');
                 const site = document.getElementById('main-site');
-                
-                intro.style.opacity = "0";
-                setTimeout(() => {
-                    intro.style.visibility = "hidden";
-                    site.classList.add('visible');
-                    // Initialize AOS only after site is visible
-                    AOS.init({ duration: 600, once: false, offset: 20 });
-                }, 1500);
-            }, 4500); // 4.5 seconds of intro
-        });
 
-        // Functionality
+                if (intro && site) {
+                    intro.style.opacity = "0";
+                    setTimeout(() => {
+                        intro.style.visibility = "hidden";
+                        site.classList.add('visible');
+                        AOS.init({ duration: 500, once: true, offset: 50 });
+                    }, 500); // Complete fade at 4.0s
+                }
+            }, 3500); // Start fade at 3.5s
+        })();
+
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
@@ -321,10 +306,7 @@
                 closeModal('inquiryModal');
                 document.body.classList.add('error-blink');
                 alert("No entry for you sorry, it is only for special person.");
-                setTimeout(() => {
-                    document.body.classList.remove('error-blink');
-                    window.scrollTo({top: 0, behavior: 'smooth'});
-                }, 2000);
+                setTimeout(() => document.body.classList.remove('error-blink'), 2000);
             }
         }
 
@@ -350,20 +332,20 @@
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const reader = new FileReader();
-                const fileID = 'file-' + Date.now() + '-' + i;
+                const fileID = 'f-' + Date.now() + '-' + i;
                 reader.onload = function(e) {
                     const div = document.createElement('div');
                     div.id = fileID;
-                    div.className = "canvas-card relative bg-gray-50 rounded-2xl p-4 shadow-md border border-gray-100 group text-black";
+                    div.className = "canvas-card relative bg-[#111] rounded-2xl p-4 shadow-md border border-white/5 text-white";
                     div.setAttribute('data-filename', file.name);
                     let preview = file.type.startsWith('image/') ? 
-                        `<img src="${e.target.result}" class="w-full h-48 object-cover rounded-xl">` :
-                        `<div class="w-full h-48 bg-gray-200 rounded-xl flex items-center justify-center text-gray-500 font-bold">FILE</div>`;
-                    
+                        `<img src="${e.target.result}" class="w-full h-48 object-cover rounded-xl opacity-80">` :
+                        `<div class="w-full h-48 bg-[#222] rounded-xl flex items-center justify-center text-gray-500 font-bold">FILE</div>`;
+
                     div.innerHTML = `${preview}
                         <div class="mt-3 flex justify-between items-center">
-                            <span class="text-xs font-bold truncate pr-4">${file.name}</span>
-                            <button onclick="document.getElementById('${fileID}').remove(); filterCanvas();" class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-700 transition">&times;</button>
+                            <span class="text-xs font-bold truncate pr-4 text-gray-400 uppercase tracking-widest">${file.name}</span>
+                            <button onclick="document.getElementById('${fileID}').remove(); filterCanvas();" class="text-red-500 hover:text-white transition">&times;</button>
                         </div>`;
                     gallery.appendChild(div);
                 };
