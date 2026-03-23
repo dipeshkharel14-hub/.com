@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD | Dipesh Kharel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --gold: #eab308;
+            --gold-dim: rgba(234,179,8,0.15);
+            --gold-glow: rgba(234,179,8,0.4);
+            --bg: #050505;
+            --bg2: #080808;
+            --bg3: #0d0d0d;
+            --card: #111;
+            --border: rgba(255,255,255,0.06);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: #e5e5e5;
+            scroll-behavior: smooth;
+            margin: 0;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* ─── SCROLL PROGRESS ─── */
+        #scroll-progress {
+            position: fixed;
+            top: 0; left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), #fff700, var(--gold));
+            width: 0%;
+            z-index: 9000;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 12px var(--gold-glow);
+        }
+
+        /* ─── CUSTOM CURSOR ─── */
+        #cursor-dot {
+            position: fixed;
+            width: 8px; height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.05s, opacity 0.2s;
+            box-shadow: 0 0 12px var(--gold-glow);
+        }
+        #cursor-ring {
+            position: fixed;
+            width: 36px; height: 36px;
+            border: 1.5px solid rgba(234,179,8,0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.18s cubic-bezier(0.23,1,0.32,1), width 0.2s, height 0.2s, opacity 0.2s;
+        }
+        body:hover #cursor-dot { opacity: 1; }
+        .cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: var(--gold); }
+
+        /* ─── INTRO OVERLAY ─── */
+        #intro-overlay {
+            position: fixed; inset: 0;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+            background: #000;
+            z-index: 9999;
+            transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1), visibility 0.6s;
+            color: white;
+            overflow: hidden;
+        }
+        #intro-overlay::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at center, rgba(234,179,8,0.07) 0%, transparent 70%);
+            animation: pulseBg 3s ease-in-out infinite;
+        }
+        @keyframes pulseBg { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+        #brand-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(44px, 8vw, 80px);
+            letter-spacing: 12px;
+            font-weight: 400;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: rise 1.4s cubic-bezier(0.16,1,0.3,1) forwards;
+            text-align: center;
+            color: white;
+        }
+        #line-divider {
+            width: 80px; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 18px 0;
+            transform: scaleX(0);
+            animation: expand 1s ease 1.2s forwards;
+        }
+        #tagline-text {
+            font-size: 11px; letter-spacing: 5px; opacity: 0;
+            animation: fadeIn 1.2s ease 1.8s forwards;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* ─── Loading bar inside intro ─── */
+        .intro-bar-wrap {
+            margin: 24px 0 8px;
+            width: 200px; height: 2px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 99px;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 0.5s ease 0.5s forwards;
+        }
+        .intro-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), #fff700);
+            border-radius: 99px;
+            width: 0%;
+            animation: loadBar 3.2s cubic-bezier(0.4,0,0.2,1) 0.5s forwards;
+            box-shadow: 0 0 8px var(--gold);
+        }
+        @keyframes loadBar { to { width: 100%; } }
+
+        .static-loading-box {
+            display: inline-block; padding: 8px 22px;
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 4px;
+            font-size: 11px; letter-spacing: 4px;
+            color: rgba(255,255,255,0.4); margin: 10px 0;
+            text-transform: uppercase; opacity: 0;
+            animation: fadeIn 0.8s ease 0.8s forwards;
+        }
+        @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+        @keyframes expand { to { transform: scaleX(1); } }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* ─── MAIN SITE ─── */
+        .main-content { opacity: 0; }
+        .main-content.visible { opacity: 1; transition: opacity 0.8s ease-in; }
+
+        /* ─── ANIMATED BACKGROUND CANVAS ─── */
+        #bg-canvas {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; opacity: 0.5;
+        }
+
+        /* ─── NAVBAR ─── */
+        #navbar {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 800;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 40px;
+            transition: all 0.4s ease;
+        }
+        #navbar.scrolled {
+            background: rgba(5,5,5,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 40px;
+        }
+        .nav-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px; letter-spacing: 6px;
+            color: white; text-decoration: none;
+            transition: color 0.3s;
+        }
+        .nav-logo:hover { color: var(--gold); }
+        .nav-links { display: flex; gap: 32px; }
+        .nav-links a {
+            font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+            color: rgba(255,255,255,0.5); text-decoration: none;
+            transition: color 0.3s; position: relative;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0;
+            width: 0; height: 1px; background: var(--gold);
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover { color: var(--gold); }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* ─── HEADER / HERO ─── */
+        header {
+            height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+            padding: 0 24px;
+            position: relative; overflow: hidden;
+            z-index: 1;
+        }
+        .hero-glow-1 {
+            position: absolute; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(234,179,8,0.08) 0%, transparent 70%);
+            border-radius: 50%; top: -100px; right: -100px;
+            animation: floatBlob 8s ease-in-out infinite;
+        }
+        .hero-glow-2 {
+            position: absolute; width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(234,179,8,0.05) 0%, transparent 70%);
+            border-radius: 50%; bottom: -50px; left: -80px;
+            animation: floatBlob 11s ease-in-out infinite reverse;
+        }
+        @keyframes floatBlob {
+            0%,100%{transform:translate(0,0) scale(1)}
+            33%{transform:translate(30px,-20px) scale(1.05)}
+            66%{transform:translate(-20px,30px) scale(0.95)}
+        }
+
+        /* Typing animation */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 0.8s steps(1) infinite;
+            color: var(--gold);
+        }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+        /* Scroll down indicator */
+        .scroll-indicator {
+            position: absolute; bottom: 40px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            opacity: 0.4; animation: fadeIn 1s ease 1s forwards;
+        }
+        .scroll-indicator span {
+            font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+        }
+        .scroll-arrow {
+            width: 1px; height: 50px;
+            background: linear-gradient(to bottom, var(--gold), transparent);
+            animation: scrollPulse 1.8s ease-in-out infinite;
+        }
+        @keyframes scrollPulse { 0%,100%{transform:scaleY(0);transform-origin:top;} 50%{transform:scaleY(1);transform-origin:top;} }
+
+        /* ─── GLOW BUTTONS ─── */
+        .btn-gold {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--gold); color: #000;
+            padding: 14px 36px; border-radius: 999px;
+            font-weight: 700; font-size: 15px; cursor: none;
+            text-decoration: none; border: none;
+            position: relative; overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.23,1,0.32,1);
+            box-shadow: 0 0 0 rgba(234,179,8,0);
+        }
+        .btn-gold::before {
+            content: ''; position: absolute; inset: 0;
+            background: white; opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .btn-gold:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 0 40px var(--gold-glow), 0 8px 30px rgba(0,0,0,0.4);
+        }
+        .btn-gold:hover::before { opacity: 0.1; }
+        .btn-ghost {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: transparent; color: white;
+            padding: 14px 36px; border-radius: 999px;
+            font-weight: 700; font-size: 15px; cursor: none;
+            text-decoration: none; border: 1px solid rgba(255,255,255,0.15);
+            position: relative; overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.23,1,0.32,1);
+        }
+        .btn-ghost:hover {
+            background: var(--gold); color: #000;
+            border-color: var(--gold);
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 0 40px var(--gold-glow);
+        }
+
+        /* Ripple on buttons */
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: scale(0);
+            animation: ripple-anim 0.6s linear;
+            pointer-events: none;
+        }
+        @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+        /* ─── ORGANIC SHAPE ─── */
+        .organic-shape {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .organic-shape:hover {
+            border-radius: 50%;
+            transform: scale(1.02) rotate(2deg);
+            border-color: var(--gold);
+            box-shadow: 0 0 40px var(--gold-dim);
+        }
+
+        /* ─── 3D TILT CARDS ─── */
+        .project-card {
+            transition: all 0.4s ease;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            position: relative; overflow: hidden;
+            transform-style: preserve-3d;
+            cursor: none;
+        }
+        .project-card:hover {
+            border-color: var(--gold);
+            background: #141414;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 30px var(--gold-dim);
+        }
+        .project-card .card-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(234,179,8,0.9), rgba(0,0,0,0.8));
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.35s ease;
+            border-radius: 22px;
+            z-index: 5;
+        }
+        .project-card:hover .card-overlay { opacity: 1; }
+        .card-overlay span {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px; letter-spacing: 5px;
+            color: #000; transform: translateY(10px);
+            transition: transform 0.35s ease;
+        }
+        .project-card:hover .card-overlay span { transform: translateY(0); }
+
+        .clickable-card {
+            transition: all 0.4s ease;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+        }
+        .clickable-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold);
+            background: #141414;
+            box-shadow: 0 0 30px var(--gold-dim);
+        }
+
+        /* ─── FILTER TABS ─── */
+        .filter-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+        .filter-tab {
+            padding: 8px 20px; border-radius: 999px;
+            font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: transparent; color: rgba(255,255,255,0.5);
+            cursor: none; transition: all 0.25s ease;
+        }
+        .filter-tab:hover, .filter-tab.active {
+            background: var(--gold); color: #000;
+            border-color: var(--gold);
+            box-shadow: 0 0 20px var(--gold-dim);
+        }
+
+        /* ─── SOCIAL SECTION ─── */
+        .social-section {
+            padding: 100px 32px;
+            text-align: center;
+            position: relative; z-index: 1;
+        }
+        .social-label {
+            font-size: 11px; letter-spacing: 6px; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 16px; display: block;
+        }
+        .social-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(36px, 6vw, 64px);
+            letter-spacing: 4px; color: white; margin-bottom: 50px;
+        }
+        .social-icons { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+        .social-icon-btn {
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            padding: 28px 36px; border-radius: 24px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            text-decoration: none; color: white;
+            transition: all 0.35s cubic-bezier(0.23,1,0.32,1);
+            position: relative; overflow: hidden;
+            cursor: none; min-width: 120px;
+        }
+        .social-icon-btn::before {
+            content: ''; position: absolute; inset: 0;
+            background: var(--gold-dim); opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .social-icon-btn i { font-size: 32px; transition: transform 0.35s, color 0.3s; }
+        .social-icon-btn span { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; opacity: 0.5; transition: opacity 0.3s; }
+        .social-icon-btn:hover {
+            transform: translateY(-8px) scale(1.05);
+            border-color: var(--gold);
+            box-shadow: 0 0 40px var(--gold-dim), 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .social-icon-btn:hover::before { opacity: 1; }
+        .social-icon-btn:hover i { transform: scale(1.2); color: var(--gold); }
+        .social-icon-btn:hover span { opacity: 1; color: var(--gold); }
+
+        /* ─── DARK SECTION ─── */
+        .dark-section {
+            background: var(--bg2);
+            border-top: 1px solid #1a1a1a;
+            border-bottom: 1px solid #1a1a1a;
+            position: relative; z-index: 1;
+        }
+
+        /* ─── MODALS ─── */
+        .modal {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000; align-items: center; justify-content: center;
+            padding: 20px; backdrop-filter: blur(20px);
+        }
+        .modal-card {
+            background: #0e0e0e;
+            border: 1px solid #222;
+            color: white;
+            animation: modalIn 0.4s cubic-bezier(0.23,1,0.32,1);
+        }
+        @keyframes modalIn { from{transform:scale(0.92) translateY(20px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+        .modal-input {
+            background: var(--bg); border: 1px solid #2a2a2a;
+            color: white; border-radius: 12px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .modal-input:focus { border-color: var(--gold); box-shadow: 0 0 20px var(--gold-dim); outline: none; }
+
+        @keyframes flashRed {
+            0%,100%{background-color:#050505} 50%{background-color:#450a0a}
+        }
+        .error-blink { animation: flashRed 0.4s linear 5; }
+
+        /* ─── STICKY FLOATING BUTTONS ─── */
+        #explore-btn {
+            position: fixed; bottom: 90px; right: 30px;
+            background: var(--gold); color: #000;
+            padding: 12px 24px; border-radius: 999px;
+            font-weight: 700; font-size: 13px; letter-spacing: 1px;
+            text-decoration: none; z-index: 700;
+            box-shadow: 0 0 30px var(--gold-glow);
+            transition: all 0.3s ease; cursor: none;
+            opacity: 0; transform: translateY(10px);
+            animation: floatIn 0.5s ease 5s forwards;
+        }
+        #explore-btn:hover { transform: scale(1.05) translateY(-2px); box-shadow: 0 0 50px var(--gold-glow); }
+
+        /* ─── QUICK ACCESS MENU ─── */
+        #quick-menu { position: fixed; bottom: 30px; right: 30px; z-index: 700; }
+        #quick-toggle {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: #111; border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            cursor: none; transition: all 0.3s ease;
+            color: white; font-size: 18px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        #quick-toggle:hover { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 20px var(--gold-dim); }
+        #quick-items {
+            position: absolute; bottom: 60px; right: 0;
+            display: flex; flex-direction: column; gap: 10px;
+            opacity: 0; pointer-events: none;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.23,1,0.32,1);
+        }
+        #quick-items.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+        .quick-item {
+            display: flex; align-items: center; gap: 10px;
+            background: #111; border: 1px solid var(--border);
+            border-radius: 999px; padding: 8px 16px 8px 12px;
+            white-space: nowrap; color: rgba(255,255,255,0.7);
+            font-size: 12px; cursor: none;
+            transition: all 0.25s ease; text-decoration: none;
+        }
+        .quick-item i { color: var(--gold); font-size: 14px; }
+        .quick-item:hover { border-color: var(--gold); color: white; box-shadow: 0 0 15px var(--gold-dim); }
+
+        @keyframes floatIn { to{opacity:1;transform:translateY(0)} }
+
+        /* ─── SECTION LABELS ─── */
+        .section-label {
+            font-size: 11px; letter-spacing: 6px; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 14px; display: block;
+        }
+
+        /* ─── FOOTER ─── */
+        footer { position: relative; z-index: 1; }
+        footer::before {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 300px; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media(max-width:768px) {
+            #navbar { padding: 16px 20px; }
+            .nav-links { display: none; }
+            #explore-btn { bottom: 100px; right: 16px; }
+            #quick-menu { bottom: 20px; right: 16px; }
+        }
+
+        /* Sections z-index */
+        section, header, footer { position: relative; z-index: 1; }
+
+        /* Sound toggle */
+        #sound-toggle {
+            position: fixed; top: 70px; right: 30px;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            cursor: none; color: rgba(255,255,255,0.3); font-size: 14px;
+            z-index: 800; transition: all 0.3s ease;
+        }
+        #sound-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+        /* Open All Projects btn */
+        .open-all-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 30px; border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.6); font-size: 13px;
+            letter-spacing: 2px; text-transform: uppercase;
+            cursor: none; background: transparent;
+            transition: all 0.3s ease; text-decoration: none;
+        }
+        .open-all-btn:hover {
+            border-color: var(--gold); color: var(--gold);
+            box-shadow: 0 0 20px var(--gold-dim);
+        }
+
+        /* Particles canvas */
+        #particles-canvas {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 0;
+            opacity: 0.6;
+        }
+
+        /* ─── PROJECT BUTTON GRID ─── */
+        .proj-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .proj-btn {
+            display: flex; align-items: center; gap: 16px;
+            padding: 22px 28px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.07);
+            background: #0e0e0e;
+            text-decoration: none; color: white;
+            transition: all 0.3s cubic-bezier(0.23,1,0.32,1);
+            position: relative; overflow: hidden;
+            cursor: none;
+        }
+        .proj-btn::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(120deg, rgba(234,179,8,0.06) 0%, transparent 60%);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .proj-btn:hover {
+            border-color: var(--gold);
+            background: #131313;
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 0 30px rgba(234,179,8,0.12), 0 12px 30px rgba(0,0,0,0.5);
+        }
+        .proj-btn:hover::before { opacity: 1; }
+        .proj-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 13px; letter-spacing: 3px;
+            color: var(--gold); opacity: 0.6;
+            min-width: 28px;
+            transition: opacity 0.3s;
+        }
+        .proj-btn:hover .proj-num { opacity: 1; }
+        .proj-name {
+            flex: 1;
+            font-size: 15px; font-weight: 600;
+            letter-spacing: 0.5px;
+            color: rgba(255,255,255,0.75);
+            transition: color 0.3s;
+        }
+        .proj-btn:hover .proj-name { color: white; }
+        .proj-arrow {
+            font-size: 18px;
+            color: rgba(234,179,8,0.4);
+            transition: all 0.3s;
+            transform: translateX(0) translateY(0);
+        }
+        .proj-btn:hover .proj-arrow {
+            color: var(--gold);
+            transform: translateX(3px) translateY(-3px);
+        }
+
+        /* ─── SOCIAL LOGO WRAP ─── */
+        .social-logo-wrap {
+            transition: transform 0.35s cubic-bezier(0.23,1,0.32,1), box-shadow 0.35s;
+        }
+        .social-icon-btn:hover .social-logo-wrap {
+            transform: scale(1.15) rotate(-4deg);
+            box-shadow: 0 0 24px rgba(255,255,255,0.15);
+        }
+    </style>
+</head>
+<body>
+
+<!-- ─── SCROLL PROGRESS ─── -->
+<div id="scroll-progress"></div>
+
+<!-- ─── CUSTOM CURSOR ─── -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- ─── PARTICLES ─── -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- ─── INTRO OVERLAY ─── -->
+<div id="intro-overlay">
+    <div id="brand-name">DIPESH KHAREL</div>
+    <div id="line-divider"></div>
+    <div class="static-loading-box">plz wait LOADING WEBSITE...</div>
+    <div class="intro-bar-wrap"><div class="intro-bar-fill"></div></div>
+    <div id="tagline-text">CREATIVE &nbsp;•&nbsp; VISION &nbsp;•&nbsp; PRECISION</div>
+</div>
+
+<!-- ─── MAIN SITE ─── -->
+<div id="main-site" class="main-content">
+
+    <!-- NAVBAR -->
+    <nav id="navbar">
+        <a href="#" class="nav-logo">DK</a>
+        <div class="nav-links">
+            <a href="#explore">Explore</a>
+            <a href="#projects">Projects</a>
+            <a href="#connect">Connect</a>
+            <a href="/cdn-cgi/l/email-protection#ef8b869f8a9c8784878e9d8a83dedbaf88828e8683c18c8082">Contact</a>
+        </div>
+    </nav>
+
+    <!-- SOUND TOGGLE -->
+    <div id="sound-toggle" title="Toggle UI sounds"><i class="fas fa-volume-xmark"></i></div>
+
+    <!-- ─── MODALS ─── -->
+    <div id="inquiryModal" class="modal">
+        <div class="modal-card p-8 rounded-3xl max-w-md w-full shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4">Access Verification</h2>
+            <p class="text-sm text-gray-500 mb-6">Enter details to continue to special content.</p>
+            <input type="text" id="authName" placeholder="Full Name" class="modal-input w-full p-4 mb-4 outline-none">
+            <input type="text" id="authPhone" placeholder="Phone Number" class="modal-input w-full p-4 mb-6 outline-none">
+            <button onclick="verifyAccess()" class="btn-gold w-full py-4 rounded-xl justify-center">Verify Identity</button>
+            <button onclick="closeModal('inquiryModal')" class="w-full mt-4 text-gray-400 text-sm hover:text-white transition cursor-none">Cancel</button>
+        </div>
+    </div>
+
+    <div id="canvasModal" class="modal">
+        <div class="modal-card p-8 rounded-3xl max-w-5xl w-full h-[85vh] overflow-y-auto relative">
+            <div class="flex justify-between items-start mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold">Public Digital Canvas</h2>
+                    <p class="text-sm text-gray-400 mt-1">Add files. Anyone can search or delete items.</p>
+                </div>
+                <button onclick="closeModal('canvasModal')" class="text-4xl font-light hover:text-red-500 text-white transition cursor-none">&times;</button>
+            </div>
+            <div class="flex flex-col md:flex-row gap-4 mb-8">
+                <input type="text" id="canvasSearch" onkeyup="filterCanvas()" placeholder="Search files by name..." class="modal-input flex-1 p-4 outline-none">
+                <input type="file" id="fileUpload" class="hidden" multiple onchange="handleFileUpload(this)">
+                <label for="fileUpload" class="cursor-pointer btn-gold px-6 py-4 rounded-xl font-bold flex items-center justify-center hover:bg-white transition">
+                    + Add New File
+                </label>
+            </div>
+            <div id="canvasGallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+            <div id="noResults" class="hidden text-center py-20 text-gray-400">No files match your search.</div>
+        </div>
+    </div>
+
+    <!-- ─── HERO ─── -->
+    <header>
+        <div class="hero-glow-1"></div>
+        <div class="hero-glow-2"></div>
+
+        <div class="mb-10" data-aos="zoom-in" data-aos-duration="800">
+            <a href="https://dipeshkharel.qzz.io">
+                <img src="IMG_20260210_154148.png" alt="MD Logo" class="w-28 h-28 object-contain hover:rotate-12 transition-transform mx-auto" style="filter: drop-shadow(0 0 20px rgba(234,179,8,0.3))">
+            </a>
+            <p class="text-xs uppercase tracking-[0.3em] mt-4 font-bold" style="opacity:0.4;letter-spacing:5px">Creative Portfolio</p>
+        </div>
+
+        <div class="z-10" data-aos="fade-up" data-aos-delay="200">
+            <h1 class="text-6xl md:text-9xl font-extrabold mb-8 tracking-tighter text-white leading-none" style="font-family:'Bebas Neue',sans-serif; letter-spacing:2px;">
+                The Future <br><span class="text-yellow-500 italic" id="typing-headline">of Education</span>
+            </h1>
+            <div class="flex gap-4 justify-center flex-wrap">
+                <a href="#explore" class="btn-gold text-lg">
+                    Open Explore
+                </a>
+                <button onclick="openModal('canvasModal')" class="btn-ghost text-lg">
+                    Public Canvas
+                </button>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <span>scroll</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </header>
+
+    <!-- ─── EXPLORE SECTION ─── -->
+    <section id="explore" class="py-36 px-8 max-w-7xl mx-auto grid md:grid-cols-2 gap-24 items-center">
+        <div data-aos="fade-right">
+            <span class="section-label">About</span>
+            <h2 class="text-5xl font-bold text-yellow-500 mb-8 leading-tight">Step into<br>your future</h2>
+            <p class="text-gray-400 text-xl mb-12 leading-relaxed">
+                Experience education like never before. I am crafting a digital world at <strong class="text-white">Cosmic International Academy</strong> that bridges science and technology.
+            </p>
+            <button onclick="openModal('inquiryModal')" class="btn-gold text-base">
+                <span>special project 😊</span>
+            </button>
+        </div>
+        <div class="relative" data-aos="fade-left">
+            <div class="absolute inset-0 bg-yellow-500/10 rounded-3xl rotate-3 -z-10 blur-sm"></div>
+            <img src="https://via.placeholder.com/600x400/111111/666666?text=Cosmic+Academy" alt="Education" class="w-full rounded-3xl shadow-2xl border border-white/5 hover:border-yellow-500/30 transition-all duration-500">
+        </div>
+    </section>
+
+    <!-- ─── ORGANIC GALLERY ─── -->
+    <section class="py-24 px-8 max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-20">
+            <div class="group" data-aos="zoom-in-right">
+                <a href="https://www.flickr.com/photos/204219108@N07/shares/05L9U8a4mi" class="organic-shape aspect-square bg-[#111] mb-8 block">
+                    <img src="IMG_20260211_191003.jpg" alt="Botanical Visit" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity">
+                </a>
+                <span class="section-label">Gallery</span>
+                <h3 class="text-3xl font-bold italic tracking-tight text-white">Botanical Garden Visit</h3>
+                <p class="text-gray-500 mt-2">Captured Moments</p>
+            </div>
+            <div class="group" data-aos="zoom-in-left">
+                <a href="https://dipeshkharel14-hub.github.io/Truth.-Or-dare/" class="organic-shape aspect-square bg-[#111] mb-8 block">
+                    <img src="IMG_20260124_121801.png" alt="Birthday" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity">
+                </a>
+                <span class="section-label">Game</span>
+                <h3 class="text-3xl font-bold italic tracking-tight text-white">Truth or Dare</h3>
+                <p class="text-gray-500 mt-2">Enjoy with friends</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         PROJECT BUTTONS SECTION  — 20 ready-made clickable buttons
+         HOW TO USE: Find the button you want, paste your URL
+         inside href=""  and you're done. That's it.
+    ════════════════════════════════════════════════════════════ -->
+    <section id="projects" class="py-32 px-8 dark-section">
+        <div class="max-w-6xl mx-auto">
+
+            <div class="text-center mb-20" data-aos="fade-down">
+                <span class="section-label">My Work</span>
+                <h2 class="text-6xl font-bold text-white" style="font-family:'Bebas Neue',sans-serif;letter-spacing:4px;">All Projects</h2>
+                <p class="text-gray-500 mt-4 text-sm tracking-widest uppercase">Click any card to open the project</p>
+            </div>
+
+            <div class="proj-grid" id="projects-grid">
+
+                <!-- ── PROJECT 01 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="0">
+                    <span class="proj-num">01</span>
+                    <span class="proj-name">Project 1</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 02 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="40">
+                    <span class="proj-num">02</span>
+                    <span class="proj-name">Project 2</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 03 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="80">
+                    <span class="proj-num">03</span>
+                    <span class="proj-name">Project 3</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 04 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="120">
+                    <span class="proj-num">04</span>
+                    <span class="proj-name">Project 4</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 05 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="160">
+                    <span class="proj-num">05</span>
+                    <span class="proj-name">Project 5</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 06 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="0">
+                    <span class="proj-num">06</span>
+                    <span class="proj-name">Project 6</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 07 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="40">
+                    <span class="proj-num">07</span>
+                    <span class="proj-name">Project 7</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 08 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="80">
+                    <span class="proj-num">08</span>
+                    <span class="proj-name">Project 8</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 09 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="120">
+                    <span class="proj-num">09</span>
+                    <span class="proj-name">Project 9</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 10 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="160">
+                    <span class="proj-num">10</span>
+                    <span class="proj-name">Project 10</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 11 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="0">
+                    <span class="proj-num">11</span>
+                    <span class="proj-name">Project 11</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 12 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="40">
+                    <span class="proj-num">12</span>
+                    <span class="proj-name">Project 12</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 13 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="80">
+                    <span class="proj-num">13</span>
+                    <span class="proj-name">Project 13</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 14 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="120">
+                    <span class="proj-num">14</span>
+                    <span class="proj-name">Project 14</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 15 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="160">
+                    <span class="proj-num">15</span>
+                    <span class="proj-name">Project 15</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 16 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="0">
+                    <span class="proj-num">16</span>
+                    <span class="proj-name">Project 16</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 17 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="40">
+                    <span class="proj-num">17</span>
+                    <span class="proj-name">Project 17</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 18 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="80">
+                    <span class="proj-num">18</span>
+                    <span class="proj-name">Project 18</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 19 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="120">
+                    <span class="proj-num">19</span>
+                    <span class="proj-name">Project 19</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+                <!-- ── PROJECT 20 ──  paste link inside href="" -->
+                <a href="" target="_blank" class="proj-btn" data-aos="fade-up" data-aos-delay="160">
+                    <span class="proj-num">20</span>
+                    <span class="proj-name">Project 20</span>
+                    <span class="proj-arrow">↗</span>
+                </a>
+
+            </div><!-- end projects-grid -->
+        </div>
+    </section>
+
+    <!-- ─── SOCIAL CONNECT SECTION ─── -->
+    <section id="connect" class="social-section dark-section">
+        <div class="max-w-2xl mx-auto" data-aos="fade-up">
+            <span class="social-label">Social Media</span>
+            <h2 class="social-title">Connect With Me</h2>
+            <div class="social-icons">
+
+                <!-- ══ FACEBOOK ══  → paste your Facebook profile URL inside href="" below -->
+                <a href="" target="_blank" class="social-icon-btn" id="fb-btn">
+                    <div class="social-logo-wrap" style="width:52px;height:52px;border-radius:14px;background:#1877F2;display:flex;align-items:center;justify-content:center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                        </svg>
+                    </div>
+                    <span>Facebook</span>
+                </a>
+
+                <!-- ══ INSTAGRAM ══  → paste your Instagram profile URL inside href="" below -->
+                <a href="" target="_blank" class="social-icon-btn" id="ig-btn">
+                    <div class="social-logo-wrap" style="width:52px;height:52px;border-radius:14px;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:flex;align-items:center;justify-content:center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                    </div>
+                    <span>Instagram</span>
+                </a>
+
+                <!-- ══ LINKEDIN ══  → paste your LinkedIn profile URL inside href="" below -->
+                <a href="" target="_blank" class="social-icon-btn" id="li-btn">
+                    <div class="social-logo-wrap" style="width:52px;height:52px;border-radius:14px;background:#0A66C2;display:flex;align-items:center;justify-content:center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
+                            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                            <rect x="2" y="9" width="4" height="12"/>
+                            <circle cx="4" cy="4" r="2"/>
+                        </svg>
+                    </div>
+                    <span>LinkedIn</span>
+                </a>
+
+                <!-- ══ EMAIL ══  (pre-filled — change address if needed) -->
+                <a href="mailto:dipeshkharel14@gmail.com" class="social-icon-btn">
+                    <div class="social-logo-wrap" style="width:52px;height:52px;border-radius:14px;background:#1a1a1a;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                    </div>
+                    <span>Email</span>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer class="bg-black text-white py-32 px-8 text-center border-t border-white/5">
+        <div data-aos="fade-up">
+            <span class="section-label" style="display:block;text-align:center;">Get in touch</span>
+            <h2 class="text-5xl font-bold mb-10 italic" style="font-family:'Bebas Neue',sans-serif;letter-spacing:4px;">Let's build the future.</h2>
+            <a href="/cdn-cgi/l/email-protection#214548514452494a494053444d101561464c40484d0f424e4c" class="btn-gold text-xl">
+                Send a Message
+            </a>
+            <div class="mt-20 opacity-20 text-xs tracking-[0.5em] uppercase">
+                <p>© 2026 Dipesh Kharel | Cosmic International Academy</p>
+            </div>
+        </div>
+    </footer>
+
+</div><!-- end main-site -->
+
+<!-- ─── FLOATING BUTTONS ─── -->
+<a href="#explore" id="explore-btn"><i class="fas fa-compass mr-2"></i>Explore Projects</a>
+
+<div id="quick-menu">
+    <div id="quick-items">
+        <a href="#explore" class="quick-item"><i class="fas fa-compass"></i> Explore</a>
+        <a href="#projects" class="quick-item"><i class="fas fa-layer-group"></i> Projects</a>
+        <a href="#connect" class="quick-item"><i class="fas fa-share-nodes"></i> Connect</a>
+        <a href="/cdn-cgi/l/email-protection#d9bdb0a9bcaab1b2b1b8abbcb5e8ed99beb4b8b0b5f7bab6b4" class="quick-item"><i class="fas fa-envelope"></i> Email Me</a>
+        <button onclick="openModal('canvasModal')" class="quick-item" style="border:none;cursor:none;"><i class="fas fa-photo-film"></i> Canvas</button>
+    </div>
+    <div id="quick-toggle"><i class="fas fa-grip-dots-vertical"></i></div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+// ─── INTRO + AOS INIT ───
+(function() {
+    setTimeout(() => {
+        const intro = document.getElementById('intro-overlay');
+        const site = document.getElementById('main-site');
+        if (intro && site) {
+            intro.style.opacity = "0";
+            setTimeout(() => {
+                intro.style.visibility = "hidden";
+                site.classList.add('visible');
+                AOS.init({ duration: 600, once: true, offset: 60, easing: 'ease-out-cubic' });
+            }, 600);
+        }
+    }, 3500);
+})();
+
+// ─── PARTICLES ───
+(function() {
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 1.5 + 0.3;
+            this.speedX = (Math.random() - 0.5) * 0.4;
+            this.speedY = (Math.random() - 0.5) * 0.4;
+            this.opacity = Math.random() * 0.4 + 0.05;
+            this.color = Math.random() > 0.85 ? '#eab308' : '#ffffff';
+        }
+        update() {
+            this.x += this.speedX; this.y += this.speedY;
+            if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+        }
+        draw() {
+            ctx.globalAlpha = this.opacity;
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    for (let i = 0; i < 120; i++) particles.push(new Particle());
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.globalAlpha = 1;
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+    }
+    animate();
+})();
+
+// ─── CURSOR ───
+(function() {
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+    function animCursor() {
+        dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+        rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+        ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+        requestAnimationFrame(animCursor);
+    }
+    animCursor();
+
+    document.querySelectorAll('a, button, .filter-tab, .social-icon-btn, label[for]').forEach(el => {
+        el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+        el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+    });
+})();
+
+// ─── SCROLL PROGRESS ───
+window.addEventListener('scroll', () => {
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const progress = (scrollTop / scrollHeight) * 100;
+    document.getElementById('scroll-progress').style.width = progress + '%';
+
+    // Navbar scroll style
+    const nav = document.getElementById('navbar');
+    if (scrollTop > 60) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+});
+
+// ─── TYPING ANIMATION ───
+(function() {
+    const phrases = ['of Education', 'of Innovation', 'of Creativity', 'of Technology'];
+    const el = document.getElementById('typing-headline');
+    if (!el) return;
+    el.classList.add('typing-cursor');
+    let pi = 0, ci = 0, deleting = false;
+
+    function type() {
+        const text = phrases[pi];
+        if (!deleting) {
+            el.textContent = text.slice(0, ++ci);
+            if (ci === text.length) { deleting = true; setTimeout(type, 2000); return; }
+        } else {
+            el.textContent = text.slice(0, --ci);
+            if (ci === 0) { deleting = false; pi = (pi + 1) % phrases.length; }
+        }
+        setTimeout(type, deleting ? 50 : 90);
+    }
+    setTimeout(type, 5000);
+})();
+
+// ─── RIPPLE EFFECT ON BUTTONS ───
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-gold, .btn-ghost, button');
+    if (!btn) return;
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple-effect';
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 700);
+});
+
+// ─── 3D TILT ON CARDS ───
+document.querySelectorAll('.project-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left, y = e.clientY - rect.top;
+        const cx = rect.width / 2, cy = rect.height / 2;
+        const rotX = ((y - cy) / cy) * -8;
+        const rotY = ((x - cx) / cx) * 8;
+        card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-8px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+    });
+});
+
+// ─── FILTER TABS ───
+(function() {
+    const tabs = document.querySelectorAll('.filter-tab');
+    const grid = document.getElementById('projects-grid');
+    if (!grid) return;
+    const cards = grid.querySelectorAll('[data-category]');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const filter = tab.dataset.filter;
+            cards.forEach(card => {
+                if (filter === 'all' || card.dataset.category === filter) {
+                    card.style.display = '';
+                    card.style.animation = 'none';
+                    requestAnimationFrame(() => { card.style.animation = ''; });
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Open All button collects all hrefs
+    document.getElementById('open-all-btn').addEventListener('click', e => {
+        e.preventDefault();
+        cards.forEach(card => { window.open(card.getAttribute('href'), '_blank'); });
+    });
+})();
+
+// ─── QUICK MENU TOGGLE ───
+(function() {
+    const toggle = document.getElementById('quick-toggle');
+    const items = document.getElementById('quick-items');
+    let open = false;
+    toggle.addEventListener('click', () => {
+        open = !open;
+        items.classList.toggle('open', open);
+        toggle.innerHTML = open ? '<i class="fas fa-xmark"></i>' : '<i class="fas fa-grip-dots-vertical"></i>';
+        if (open) { toggle.style.borderColor = 'var(--gold)'; toggle.style.color = 'var(--gold)'; }
+        else { toggle.style.borderColor = ''; toggle.style.color = ''; }
+    });
+})();
+
+// ─── SOUND TOGGLE ───
+(function() {
+    const btn = document.getElementById('sound-toggle');
+    let soundOn = false;
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    function playClick() {
+        if (!soundOn) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+        osc.start(); osc.stop(ctx.currentTime + 0.1);
+    }
+    btn.addEventListener('click', () => {
+        soundOn = !soundOn;
+        btn.innerHTML = soundOn ? '<i class="fas fa-volume-high"></i>' : '<i class="fas fa-volume-xmark"></i>';
+        btn.style.color = soundOn ? 'var(--gold)' : '';
+        btn.style.borderColor = soundOn ? 'var(--gold)' : '';
+    });
+    document.addEventListener('click', e => {
+        if (e.target.closest('a, button')) playClick();
+    });
+})();
+
+// ─── MODAL LOGIC (ORIGINAL) ───
+function openModal(id) {
+    document.getElementById(id).style.display = 'flex';
+}
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
+
+function verifyAccess() {
+    const name = document.getElementById('authName').value.trim();
+    const phone = document.getElementById('authPhone').value.trim();
+    if (name === "Dipesh Kharel" && phone === "9860469218") {
+        window.location.href = "https://dipeshkharel14-hub.github.io/Something-to-say/";
+    } else {
+        closeModal('inquiryModal');
+        document.body.classList.add('error-blink');
+        alert("No entry for you sorry, it is only for special person.");
+        setTimeout(() => document.body.classList.remove('error-blink'), 2000);
+    }
+}
+
+function filterCanvas() {
+    const query = document.getElementById('canvasSearch').value.toLowerCase();
+    const cards = document.querySelectorAll('.canvas-card');
+    let hasVisible = false;
+    cards.forEach(card => {
+        const fileName = card.getAttribute('data-filename').toLowerCase();
+        if (fileName.includes(query)) { card.style.display = 'block'; hasVisible = true; }
+        else { card.style.display = 'none'; }
+    });
+    document.getElementById('noResults').style.display = hasVisible ? 'none' : 'block';
+}
+
+function handleFileUpload(input) {
+    const gallery = document.getElementById('canvasGallery');
+    const files = input.files;
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+        const fileID = 'f-' + Date.now() + '-' + i;
+        reader.onload = function(e) {
+            const div = document.createElement('div');
+            div.id = fileID;
+            div.className = "canvas-card relative bg-[#111] rounded-2xl p-4 shadow-md border border-white/5 text-white";
+            div.setAttribute('data-filename', file.name);
+            let preview = file.type.startsWith('image/')
+                ? `<img src="${e.target.result}" class="w-full h-48 object-cover rounded-xl opacity-80">`
+                : `<div class="w-full h-48 bg-[#222] rounded-xl flex items-center justify-center text-gray-500 font-bold">FILE</div>`;
+            div.innerHTML = `${preview}
+                <div class="mt-3 flex justify-between items-center">
+                    <span class="text-xs font-bold truncate pr-4 text-gray-400 uppercase tracking-widest">${file.name}</span>
+                    <button onclick="document.getElementById('${fileID}').remove();filterCanvas();" class="text-red-500 hover:text-white transition">&times;</button>
+                </div>`;
+            gallery.appendChild(di
