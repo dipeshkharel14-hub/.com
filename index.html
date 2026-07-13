@@ -11,11 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 
     <style>
-        /* ============================================================
-           DESIGN TOKENS
-           Same gold-on-black identity as before, just given more room
-           to breathe. Everything downstream reads from these variables.
-           ============================================================ */
+    
         :root {
             --gold: #eab308;
             --gold-soft: #f5cb3d;
@@ -56,13 +52,6 @@
             .wrap { padding-left: 22px; padding-right: 22px; }
         }
 
-        /* ============================================================
-           HERO BACKGROUND VIDEO
-           Scoped to the hero section only — every other section keeps
-           the original spreading gold-particle field, no video.
-           Drop the file "grok_video_2026-03-16-15-08-22.mp4" in the
-           same folder as this index.html for it to appear.
-           ============================================================ */
         #bg-video-layer {
             position: absolute;
             inset: 0;
@@ -84,7 +73,7 @@
             filter: saturate(0.9) contrast(1.05);
         }
         #bg-video-layer::after {
-            /* Vignette so text stays readable over any footage */
+            
             content: '';
             position: absolute;
             inset: 0;
@@ -93,12 +82,6 @@
                 linear-gradient(180deg, rgba(5,5,5,0.65) 0%, rgba(5,5,5,0.4) 20%, rgba(5,5,5,0.75) 100%);
         }
 
-        /* ============================================================
-           CURSOR + PROGRESS + PARTICLES
-           Particle field spans the full page (fixed, behind everything)
-           exactly like the original site — this is the "stars spreading"
-           effect on every section except the hero, which has the video.
-           ============================================================ */
         #scroll-progress {
             position: fixed;
             top: 0; left: 0;
@@ -138,9 +121,7 @@
             opacity: 0.55;
         }
 
-        /* ============================================================
-           INTRO LOADER
-           ============================================================ */
+    
         #intro-overlay {
             position: fixed;
             inset: 0;
@@ -198,9 +179,7 @@
         .anim-1 { animation: fadeUp 0.7s ease 0.1s both; }
         .anim-2 { animation: fadeUp 0.7s ease 0.3s both; }
 
-        /* ============================================================
-           NAVBAR
-           ============================================================ */
+    
         #navbar {
             position: fixed;
             top: 0; left: 0; right: 0;
@@ -893,25 +872,13 @@
             <button class="coll-modal-close" onclick="closeModal('booksModal')">&times;</button>
         </div>
         <div class="coll-modal-body">
-            <!--
-            ════════════════════════════════════════════════════════
-            HOW TO ADD A BOOK:
-            Go to the `bookData` array near the bottom of this file
-            (search for "bookData"). For each entry set:
-              cover : 'yourcover.jpg'  -> placed in the SAME root
-                                          folder as index.html
-              title : the book title
-              tag   : short label, e.g. "Poetry" or "Novel"
-              desc  : one or two line description
-              link  : where readers can get/read it (optional)
-            ════════════════════════════════════════════════════════
-            -->
+            
             <div class="book-grid" id="book-grid"></div>
         </div>
     </div>
 </div>
 
-<!-- CERTIFICATES COLLECTION MODAL — new: online involvement / certificates -->
+
 <div id="certModal" class="modal">
     <div class="coll-modal-inner">
         <div class="coll-modal-hdr">
@@ -923,20 +890,8 @@
             <button class="coll-modal-close" onclick="closeModal('certModal')">&times;</button>
         </div>
         <div class="coll-modal-body">
-            <!--
-            ════════════════════════════════════════════════════════
-            HOW TO ADD A CERTIFICATE:
-            Go to the `certData` array near the bottom of this file
-            (search for "certData"). For each entry set:
-              src     : 'yourcert.jpg' -> placed in the SAME root
-                                          folder as index.html
-              title   : name of the course / certificate
-              issuer  : who issued it
-              desc    : short description
-            Certificate images render wider than the art thumbnails
-            so the text on the certificate stays legible.
-            ════════════════════════════════════════════════════════
-            -->
+            
+            
             <div class="cert-grid" id="cert-grid"></div>
         </div>
     </div>
@@ -1373,12 +1328,7 @@ function verifyAccess() {
     }
 }
 
-// ══════════════════════════════════════════════
-// VLOG ACCESS — username + password gate
-// Visitors always see the thumbnail + title for every vlog.
-// The actual video only opens after a correct login below.
-// Credentials kept exactly the same as before.
-// ══════════════════════════════════════════════
+/
 var VLOG_USERNAME = "Dipesh Kharel";
 var VLOG_PASSWORD = "Hsepid";
 var _pendingVlogIndex = null;
@@ -1524,10 +1474,7 @@ function handleFileUpload(input) {
 // ART LIGHTBOX (shared by Art Collection, Pic Gallery, Certificates)
 // ══════════════════════════════════════════════
 
-/*
-  artData — fill in src and description for each painting.
-  Index 0 = Art 01, index 1 = Art 02, etc.
-*/
+
 var artData = [
     { src: 'IMG_20260410_150645.jpg', title: 'Sita Ram', desc: 'painting of hindu god Sita and Ram (2020).' },
     { src: 'IMG_20260410_150334.jpg', title: 'Radha Krishna', desc: 'detailed painting of hindu god Radha and Krishna 🦚(2025).' },
@@ -1546,10 +1493,7 @@ var artData = [
     { src: '', title: 'Painting XV', desc: 'Description coming soon.' }
 ];
 
-/*
-  galleryData — fill in src and description for each personal photo.
-  Index 0 = Photo I, index 1 = Photo II, etc.
-*/
+/
 var galleryData = [
     { src: 'IMG_20260327_214102.jpg', title: 'Dipesh Kharel', desc: 'Dipesh Kharel.' },
     { src: 'IMG_20250717_104433.jpg', title: 'Dipesh Kharel', desc: 'Dipesh Kharel.' },
@@ -1557,22 +1501,13 @@ var galleryData = [
     { src: '', title: 'Photo IV', desc: 'Description coming soon.' }
 ];
 
-/*
-  bookData — NEW. Fill in cover / title / tag / desc / link for each
-  book or piece of writing. Leave cover empty to show a placeholder
-  cover until you add the real image (same folder as index.html).
-*/
+/
 var bookData = [
     { cover: 'image.jpg', title: 'Wave Of HumanLife', tag: 'Coming Soon', desc: 'This would be my one and only all time favorite book because i will be updating this book when i get time and only some of my closest friends will be eligible to read this book because i will be writing my secrets in this books and my life every remarkable incident.', link: '' },
     { cover: '', title: 'Untitled Manuscript II', tag: 'Coming Soon', desc: 'A short description of this book or collection goes here.', link: '' },
     { cover: '', title: 'Untitled Manuscript III', tag: 'Coming Soon', desc: 'A short description of this book or collection goes here.', link: '' }
 ];
 
-/*
-  certData — NEW. Fill in src / title / issuer / desc for each
-  certificate or program you've been part of. These render wider
-  than the art thumbnails so certificate text stays legible.
-*/
 var certData = [
     { src: 'boarding-pass-Dipesh-Kharel.jpeg', title: 'NASA Certificate ', issuer: 'NASA', desc: 'This document is a digital commemorative boarding pass generated through NASA.  ' },
     { src: '', title: 'Certificate II', issuer: 'Issuer Name', desc: 'Description coming soon.' },
@@ -1621,8 +1556,6 @@ function renderCerts() {
 renderBooks();
 renderCerts();
 
-// Maps a dataset keyword to its data array + grid id, so one lightbox
-// can serve the Art Collection, the Pic Gallery, and Certificates.
 var PHOTO_DATASETS = {
     art: { data: artData, gridId: 'art-grid' },
     gallery: { data: galleryData, gridId: 'gallery-grid' },
@@ -1695,11 +1628,7 @@ document.getElementById('lb-img-wrap').addEventListener('wheel', function (e) {
     lbZoom(e.deltaY < 0 ? 0.15 : -0.15);
 }, { passive: false });
 
-/*
-  syncPhotoCardThumb — when an image is set in artData or galleryData,
-  automatically replace the "coming soon" thumb in the matching grid
-  with the actual image (so cards update when data is set).
-*/
+
 function syncPhotoCardThumb(gridId, index, src, title) {
     var cards = document.querySelectorAll('#' + gridId + ' .art-card');
     if (!cards[index] || !src) return;
