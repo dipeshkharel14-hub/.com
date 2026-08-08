@@ -38,7 +38,7 @@ if (!process.env.GEMINI_API_KEY) {
   process.exit(1);
 }
 
-/* ══════════════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════════════════════
    Pull the existing DKAI_KB straight out of index.html at startup.
    This is what makes it "one combined brain" instead of two separate
    ones: Gemini gets every hand-written fact/joke/answer you already
@@ -46,9 +46,9 @@ if (!process.env.GEMINI_API_KEY) {
    so it can solve a math problem AND stay in-character, in the same
    conversation. It reads the array, it never edits it, and nothing
    in index.html itself changes because of this.
-   ══════════════════════════════════════════════════════════════════ */
+   ════════════════════════════════════════════════════════════════════ */
 function loadKbReference() {
-  const indexPath = process.env.INDEX_HTML_PATH || path.join(__dirname, '..', 'index.html');
+  const indexPath = process.env.INDEX_HTML_PATH || path.join(__dirname, 'index.html');
   try {
     const html = fs.readFileSync(indexPath, 'utf8');
     const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
@@ -82,7 +82,7 @@ console.log(
     : '⚠️  Running without DKAI_KB reference material — check INDEX_HTML_PATH.'
 );
 
-/* ══════════════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════════════════════
    MASTER SYSTEM PROMPT — DK AI persona rules.
    This is the single brain for the widget now: every message the
    visitor types goes to Gemini FIRST (see index.html's dkaiSubmit),
@@ -90,7 +90,7 @@ console.log(
    unreachable. So this prompt has to do double duty — stay in
    character AND actually answer real questions (math, science,
    general knowledge) the way talking to Gemini directly would.
-   ══════════════════════════════════════════════════════════════════ */
+   ════════════════════════════════════════════════════════════════════ */
 const DKAI_SYSTEM_PROMPT = `
 You are **DK AI**, the personal AI assistant embedded on Dipesh Kharel's
 portfolio website. You represent Dipesh in first-person-adjacent, "his
@@ -169,7 +169,7 @@ knowledge base — real facts, project names, and voice/tone examples about
 Dipesh. Use them for accuracy and personality when a question is actually
 about Dipesh/his work. They are not a limit on your general knowledge —
 you still have that for everything else.
-${KB_REFERENCE}` : 'https://com-udiw.onrender.com'}
+${KB_REFERENCE}` : ''}
 `.trim();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -199,7 +199,7 @@ app.use(allowedOrigin ? cors({ origin: allowedOrigin }) : cors());
 
 app.use(express.json({ limit: '1mb' }));
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 
@@ -261,17 +261,19 @@ app.post('/api/chat', async (req, res) => {
       .filter(Boolean);
 
     res.json({ reply: text, sources, searched: sources.length > 0 });
-    } catch (err) {
+  } catch (err) {
     console.error('Gemini request failed:', err && err.message ? err.message : err, err && err.stack ? err.stack : '');
     const clientMsg = process.env.NODE_ENV === 'production'
       ? 'DK AI backend hit an error. Try again in a moment.'
       : (err && err.message ? err.message : String(err));
     res.status(500).json({ error: clientMsg });
   }
+});
 
 app.get('/api/health', (req, res) => res.json({ ok: true, model: MODEL_NAME }));
+
 // Root route (Fixes "Cannot GET /")
-app.get('/', (req, res) => {
+app.get('/health', (req, res) => {
   res.send('DK AI Server is running!');
 });
 
@@ -290,5 +292,7 @@ app.get('/api/debug', (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log(`✅ DK AI backend running at https://com-udiw.onrender.com:${PORT}`);
+  console.log(`✅ DK AI backend running on port ${PORT}`);
+  console.log(`   Health check: http://localhost:${PORT}/api/health`);
+  console.log(`   Chat API: POST http://localhost:${PORT}/api/chat`);
 });
