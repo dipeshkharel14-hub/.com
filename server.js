@@ -188,7 +188,6 @@ console.log(ENABLE_SEARCH_GROUNDING ? '🔎 Google Search grounding: ON' : '🔎
 const app = express();
 app.set('trust proxy', true);
 
-
 // Restrict CORS to your real deployed site once you know its origin.
 // Leaving this wide open (cors()) is fine for local testing but means
 // literally any website could call your Gemini quota. Set
@@ -201,7 +200,6 @@ app.use(express.json({ limit: '1mb' }));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
-
 
 // Very small in-memory rate limiter (per IP) so a single client can't
 // hammer the Gemini API by accident. Not meant to be production-grade.
@@ -268,6 +266,7 @@ app.post('/api/chat', async (req, res) => {
       : (err && err.message ? err.message : String(err));
     res.status(500).json({ error: clientMsg });
   }
+}); // ✅ FIX: Added missing closing brace!
 
 app.get('/api/health', (req, res) => res.json({ ok: true, model: MODEL_NAME }));
 
@@ -289,9 +288,8 @@ app.get('/api/debug', (req, res) => {
   });
 });
 
-
 app.listen(PORT, () => {
   console.log(`✅ DK AI backend running on port ${PORT}`);
-  console.log(`   Health check: https://com-udiw.onrender.com:${PORT}/api/health`);
-  console.log(`   Chat API: POST https://com-udiw.onrender.com:${PORT}/api/chat`);
+  console.log(`   Health check: https://com-udiw.onrender.com/api/health`);
+  console.log(`   Chat API: POST https://com-udiw.onrender.com/api/chat`);
 });
