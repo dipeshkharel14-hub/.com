@@ -293,6 +293,6 @@ app.get('/api/debug', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`✅ DK AI backend running on port ${PORT}`);
-  console.log(`   Health check: http://localhost:${PORT}/api/health`);
-  console.log(`   Chat API: POST http://localhost:${PORT}/api/chat`);
+  console.log(`   Health check: https://com-udiw.onrender.com:${PORT}/api/health`);
+  console.log(`   Chat API: POST https://com-udiw.onrender.com:${PORT}/api/chat`);
 });
