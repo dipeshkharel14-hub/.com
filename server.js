@@ -169,7 +169,7 @@ knowledge base — real facts, project names, and voice/tone examples about
 Dipesh. Use them for accuracy and personality when a question is actually
 about Dipesh/his work. They are not a limit on your general knowledge —
 you still have that for everything else.
-${KB_REFERENCE}` : ''}
+${KB_REFERENCE}` : 'https://com-udiw.onrender.com'}
 `.trim();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -263,5 +263,5 @@ app.post('/api/chat', async (req, res) => {
 app.get('/api/health', (req, res) => res.json({ ok: true, model: MODEL_NAME }));
 
 app.listen(PORT, () => {
-  console.log(`✅ DK AI backend running at http://localhost:${PORT}`);
+  console.log(`✅ DK AI backend running at https://com-udiw.onrender.com:${PORT}`);
 });
