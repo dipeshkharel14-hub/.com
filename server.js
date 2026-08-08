@@ -1,0 +1,242 @@
+/**
+ * DK AI — Gemini backend
+ * ------------------------------------------------------------------
+ * Express server that proxies chat messages to Google's Gemini API.
+ * The API key NEVER touches the client — it only ever lives here,
+ * loaded from a local .env file (see .env.example).
+ *
+ * Run:
+ *   npm install
+ *   cp .env.example .env   # then paste your real key in
+ *   node server.js
+ * ------------------------------------------------------------------
+ */
+
+require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
+const express = require('express');
+const cors = require('cors');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+const PORT = process.env.PORT || 5000;
+const MODEL_NAME = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+
+if (!process.env.GEMINI_API_KEY) {
+  console.error('\n❌  Missing GEMINI_API_KEY.');
+  console.error('    Copy .env.example to .env and paste your key in, then restart.\n');
+  process.exit(1);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Pull the existing DKAI_KB straight out of index.html at startup.
+   This is what makes it "one combined brain" instead of two separate
+   ones: Gemini gets every hand-written fact/joke/answer you already
+   built as grounding material, on top of its own general knowledge —
+   so it can solve a math problem AND stay in-character, in the same
+   conversation. It reads the array, it never edits it, and nothing
+   in index.html itself changes because of this.
+   ══════════════════════════════════════════════════════════════════ */
+function loadKbReference() {
+  const indexPath = process.env.INDEX_HTML_PATH || path.join(__dirname, '..', 'index.html');
+  try {
+    const html = fs.readFileSync(indexPath, 'utf8');
+    const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
+    for (const script of scripts) {
+      const startIdx = script.indexOf('var DKAI_KB = [');
+      if (startIdx === -1) continue;
+      const endIdx = script.indexOf('];', startIdx);
+      if (endIdx === -1) continue;
+      const arrCode = script.slice(startIdx, endIdx + 2);
+      const sandbox = {};
+      // Trusted, self-authored content (your own index.html) — not user input.
+      // eslint-disable-next-line no-new-func
+      new Function('sandbox', arrCode + '\nsandbox.DKAI_KB = DKAI_KB;')(sandbox);
+      const kb = sandbox.DKAI_KB;
+      if (Array.isArray(kb) && kb.length) {
+        return kb
+          .map((e) => '- ' + String(e.answer || '').replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim())
+          .join('\n');
+      }
+    }
+  } catch (err) {
+    console.warn(`⚠️  Couldn't load DKAI_KB from ${indexPath} (${err.message}) — starting without it. Set INDEX_HTML_PATH if index.html lives somewhere else.`);
+  }
+  return '';
+}
+
+const KB_REFERENCE = loadKbReference();
+console.log(
+  KB_REFERENCE
+    ? `✅ Loaded ${KB_REFERENCE.split('\n').length} reference lines from DKAI_KB.`
+    : '⚠️  Running without DKAI_KB reference material — check INDEX_HTML_PATH.'
+);
+
+/* ══════════════════════════════════════════════════════════════════
+   MASTER SYSTEM PROMPT — DK AI persona rules.
+   This is the single brain for the widget now: every message the
+   visitor types goes to Gemini FIRST (see index.html's dkaiSubmit),
+   with the offline DKAI_KB kicking in only if this backend is
+   unreachable. So this prompt has to do double duty — stay in
+   character AND actually answer real questions (math, science,
+   general knowledge) the way talking to Gemini directly would.
+   ══════════════════════════════════════════════════════════════════ */
+const DKAI_SYSTEM_PROMPT = `
+You are **DK AI**, the personal AI assistant embedded on Dipesh Kharel's
+portfolio website. You represent Dipesh in first-person-adjacent, "his
+assistant" voice — never claim to literally be Dipesh.
+
+You are a full, general-purpose conversational AI — the same underlying
+intelligence someone gets chatting with Gemini directly. Solve math
+problems, explain science, answer history/geography/coding/trivia
+questions, help with real tasks — anything a capable AI assistant would
+normally handle — fully and accurately. The persona below is a voice and
+a set of facts layered on top of that, not a restriction on what you're
+allowed to know or help with. Only steer away from a topic if it's
+something you'd decline for anyone (illegal, explicit, harmful) — never
+just because a question has nothing to do with Dipesh.
+
+## IDENTITY
+- Dipesh Kharel is a Developer, Writer, and Visionary based in Kathmandu, Nepal.
+- He is the Founder & CEO of **NEXUS** and **Aivoke.Ai**.
+- He is currently a **Grade 12 Science** student at **Cosmic International Academy**.
+- Outside of building AI platforms he writes on technology, philosophy & society,
+  paints (Sita Ram, Radha Krishna, Nepali heritage art), and runs a personal vlog.
+
+## TONE
+Witty, smooth, classic, intelligent, and slightly flirty — but always grounded,
+mature, and self-aware. Never cringe, never desperate, never over-the-top.
+Confidence over neediness. Charm should read as effortless, not forced.
+For a genuine factual/technical question, answer it straight and well first —
+personality is seasoning, not a substitute for the actual answer.
+
+## RELATIONSHIP STATUS — CORE FACTS (do not contradict these)
+- Dipesh is 100% single.
+- He is a strictly "one-woman" type and a classic, old-school gentleman.
+- He does not play field games, chase casual attention, or pursue multiple people.
+
+## THE SPECIAL PROJECT
+If asked about "the special project": explain that Dipesh built this dedicated
+architecture with a specific person in mind, but system records confirm the
+slot was never selected or claimed. It remains 100% vacant and unoccupied.
+Frame this as data you're "reading off," not gossip you're inventing.
+
+## STRANGER POLICY & PROPOSALS
+- Dipesh ignores cold DMs and random online strangers — treat this as a firm 0%
+  chance scenario. He stays focused on his goals and doesn't make random moves
+  or go around proposing to people.
+- However, if a familiar, genuine, trusted person he already knows in real life
+  steps forward with a sincere proposal, he is very likely to accept.
+- Never encourage a stranger to believe they have a real chance; be honest about
+  the "trusted, familiar person" condition rather than flattering everyone equally.
+
+## HANDLING NEGATIVE FEEDBACK
+If a user says something like "bad", "wrong", "boring", or "sucks": respond with
+a smooth, self-aware, witty recovery. Stay composed — no defensiveness, no
+over-apologizing. Own it lightly and redirect with confidence.
+
+## OFF-TOPIC / FLIRTY DRIFT
+If the conversation drifts off-topic or gets flirty, keep replies clever and
+charming while staying classy. Never be crude, never be explicit, never make
+Dipesh sound like he's chasing anyone.
+
+## HARD BOUNDARIES
+- Never invent facts about Dipesh that contradict the identity section above.
+- Never claim to have real "system logs" or "private data" — that's a stylistic
+  flourish for tone, not something to be taken as literally true if pressed;
+  if someone earnestly asks whether you actually have logs/surveillance data,
+  clarify honestly that it's a conversational style, not real tracking.
+- Never produce explicit sexual content, harassment, or anything demeaning
+  toward any real person (including the user).
+- For questions about Dipesh/NEXUS/Aivoke.Ai, keep it to a few sentences unless
+  asked for detail. For real questions (math, science, coding, general
+  knowledge), answer with whatever length actually does the job properly —
+  don't truncate a real explanation just to stay "in character."
+${KB_REFERENCE ? `
+## REFERENCE MATERIAL
+The lines below are pulled directly from the site's own hand-written
+knowledge base — real facts, project names, and voice/tone examples about
+Dipesh. Use them for accuracy and personality when a question is actually
+about Dipesh/his work. They are not a limit on your general knowledge —
+you still have that for everything else.
+${KB_REFERENCE}` : ''}
+`.trim();
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({
+  model: MODEL_NAME,
+  systemInstruction: DKAI_SYSTEM_PROMPT,
+});
+
+const app = express();
+
+// Restrict CORS to your real deployed site once you know its origin.
+// Leaving this wide open (cors()) is fine for local testing but means
+// literally any website could call your Gemini quota. Set
+// ALLOWED_ORIGIN in your host's environment variables (NOT in a
+// committed file) once your frontend has a real domain.
+const allowedOrigin = process.env.ALLOWED_ORIGIN;
+app.use(cors(allowedOrigin ? { origin: allowedOrigin } : {}));
+app.use(express.json({ limit: '1mb' }));
+
+// Very small in-memory rate limiter (per IP) so a single client can't
+// hammer the Gemini API by accident. Not meant to be production-grade.
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX = 30;
+const hits = new Map();
+function rateLimited(ip) {
+  const now = Date.now();
+  const arr = (hits.get(ip) || []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  arr.push(now);
+  hits.set(ip, arr);
+  return arr.length > RATE_LIMIT_MAX;
+}
+
+// Gemini expects roles 'user' | 'model'. The front-end's dkaiHistory
+// uses 'user' | 'bot' — translate + validate before forwarding.
+function toGeminiHistory(history) {
+  if (!Array.isArray(history)) return [];
+  return history
+    .filter((m) => m && typeof m.text === 'string' && (m.role === 'user' || m.role === 'bot'))
+    .slice(-20) // keep the payload small
+    .map((m) => ({
+      role: m.role === 'user' ? 'user' : 'model',
+      parts: [{ text: String(m.text).slice(0, 4000) }],
+    }));
+}
+
+app.post('/api/chat', async (req, res) => {
+  try {
+    const ip = req.ip || req.connection?.remoteAddress || 'unknown';
+    if (rateLimited(ip)) {
+      return res.status(429).json({ error: 'Too many requests — slow down a bit.' });
+    }
+
+    const { message, history } = req.body || {};
+    if (!message || typeof message !== 'string' || !message.trim()) {
+      return res.status(400).json({ error: 'message is required' });
+    }
+
+    const chat = model.startChat({
+      history: toGeminiHistory(history),
+      generationConfig: {
+        maxOutputTokens: 900,
+        temperature: 0.75,
+      },
+    });
+
+    const result = await chat.sendMessage(message.slice(0, 2000));
+    const text = result.response.text();
+
+    res.json({ reply: text });
+  } catch (err) {
+    console.error('Gemini request failed:', err);
+    res.status(500).json({ error: 'DK AI backend hit an error. Try again in a moment.' });
+  }
+});
+
+app.get('/api/health', (req, res) => res.json({ ok: true, model: MODEL_NAME }));
+
+app.listen(PORT, () => {
+  console.log(`✅ DK AI backend running at http://localhost:${PORT}`);
+});
