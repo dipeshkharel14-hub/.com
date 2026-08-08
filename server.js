@@ -186,6 +186,8 @@ const model = genAI.getGenerativeModel({
 console.log(ENABLE_SEARCH_GROUNDING ? '🔎 Google Search grounding: ON' : '🔎 Google Search grounding: OFF (ENABLE_SEARCH_GROUNDING=false)');
 
 const app = express();
+app.set('trust proxy', true);
+
 
 // Restrict CORS to your real deployed site once you know its origin.
 // Leaving this wide open (cors()) is fine for local testing but means
@@ -193,7 +195,8 @@ const app = express();
 // ALLOWED_ORIGIN in your host's environment variables (NOT in a
 // committed file) once your frontend has a real domain.
 const allowedOrigin = process.env.ALLOWED_ORIGIN;
-app.use(cors(allowedOrigin ? { origin: allowedOrigin } : {}));
+app.use(allowedOrigin ? cors({ origin: allowedOrigin }) : cors());
+
 app.use(express.json({ limit: '1mb' }));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
@@ -258,13 +261,33 @@ app.post('/api/chat', async (req, res) => {
       .filter(Boolean);
 
     res.json({ reply: text, sources, searched: sources.length > 0 });
-  } catch (err) {
-    console.error('Gemini request failed:', err);
-    res.status(500).json({ error: 'DK AI backend hit an error. Try again in a moment.' });
+    } catch (err) {
+    console.error('Gemini request failed:', err && err.message ? err.message : err, err && err.stack ? err.stack : '');
+    const clientMsg = process.env.NODE_ENV === 'production'
+      ? 'DK AI backend hit an error. Try again in a moment.'
+      : (err && err.message ? err.message : String(err));
+    res.status(500).json({ error: clientMsg });
   }
-});
 
 app.get('/api/health', (req, res) => res.json({ ok: true, model: MODEL_NAME }));
+// Root route (Fixes "Cannot GET /")
+app.get('/', (req, res) => {
+  res.send('DK AI Server is running!');
+});
+
+// Debug endpoint
+app.get('/api/debug', (req, res) => {
+  res.json({
+    ok: true,
+    model: MODEL_NAME,
+    port: PORT,
+    hasGeminiKey: !!process.env.GEMINI_API_KEY,
+    allowedOrigin: process.env.ALLOWED_ORIGIN || null,
+    enableSearchGrounding: ENABLE_SEARCH_GROUNDING,
+    ip: req.ip,
+  });
+});
+
 
 app.listen(PORT, () => {
   console.log(`✅ DK AI backend running at https://com-udiw.onrender.com:${PORT}`);
