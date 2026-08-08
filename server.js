@@ -681,11 +681,20 @@ app.post(
 
 
     } catch (err) {
+  console.error("GEMINI ERROR:", err);
 
-      console.error(
-        'Gemini request failed:',
-        err?.message || err
-      );
+  if (res.headersSent) {
+    res.write(JSON.stringify({
+      type: "error",
+      error: err?.message || String(err)
+    }) + "\n");
+    res.end();
+  } else {
+    res.status(500).json({
+      error: err?.message || String(err)
+    });
+  }
+    }
 
       console.error(
         err?.stack || ''
