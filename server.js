@@ -56,33 +56,6 @@ if (!/^AIzaSy/.test(process.env.GEMINI_API_KEY)) {
    conversation. It reads the array, it never edits it, and nothing
    in index.html itself changes because of this.
    ════════════════════════════════════════════════════════════════════ */
-function loadKbReference() {
-  const indexPath = process.env.INDEX_HTML_PATH || path.join(__dirname, 'index.html');
-  try {
-    const html = fs.readFileSync(indexPath, 'utf8');
-    const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
-    for (const script of scripts) {
-      const startIdx = script.indexOf('var DKAI_KB = [');
-      if (startIdx === -1) continue;
-      const endIdx = script.indexOf('];', startIdx);
-      if (endIdx === -1) continue;
-      const arrCode = script.slice(startIdx, endIdx + 2);
-      const sandbox = {};
-      // Trusted, self-authored content (your own index.html) — not user input.
-      // eslint-disable-next-line no-new-func
-      new Function('sandbox', arrCode + '\nsandbox.DKAI_KB = DKAI_KB;')(sandbox);
-      const kb = sandbox.DKAI_KB;
-      if (Array.isArray(kb) && kb.length) {
-        return kb
-          .map((e) => '- ' + String(e.answer || '').replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim())
-          .join('\n');
-      }
-    }
-  } catch (err) {
-    console.warn(`⚠️  Couldn't load DKAI_KB from ${indexPath} (${err.message}) — starting without it. Set INDEX_HTML_PATH if index.html lives somewhere else.`);
-  }
-  return '';
-}
 
 const KB_REFERENCE = loadKbReference();
 console.log(
