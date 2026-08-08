@@ -195,6 +195,10 @@ const app = express();
 const allowedOrigin = process.env.ALLOWED_ORIGIN;
 app.use(cors(allowedOrigin ? { origin: allowedOrigin } : {}));
 app.use(express.json({ limit: '1mb' }));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'index.html'));
+});
+
 
 // Very small in-memory rate limiter (per IP) so a single client can't
 // hammer the Gemini API by accident. Not meant to be production-grade.
