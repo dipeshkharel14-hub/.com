@@ -268,7 +268,6 @@ app.post('/api/chat', async (req, res) => {
       : (err && err.message ? err.message : String(err));
     res.status(500).json({ error: clientMsg });
   }
-});
 
 app.get('/api/health', (req, res) => res.json({ ok: true, model: MODEL_NAME }));
 
