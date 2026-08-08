@@ -16,8 +16,7 @@ const PORT = process.env.PORT || 5000;
 const MODEL_NAME =
   process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
-const ENABLE_SEARCH_GROUNDING =
-  process.env.ENABLE_SEARCH_GROUNDING !== 'false';
+const ENABLE_SEARCH_GROUNDING = false;
 
 
 /* ============================================================
@@ -693,18 +692,7 @@ app.post(
       );
 
 
-      const clientMsg =
-        process.env.NODE_ENV ===
-        'production'
-
-          ? 'DK AI backend hit an error. Try again in a moment.'
-
-          : (
-              err?.message ||
-              String(err)
-            );
-
-
+      const clientMsg = err?.message || String(err);
       /*
        * If streaming has already started,
        * send an error line instead of attempting
