@@ -31,7 +31,7 @@ const { GoogleGenAI } = require('@google/genai');
 const PORT = process.env.PORT || 5000;
 
 const MODEL_NAME =
-  process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  process.env.GEMINI_MODEL || 'gemini-3.6-flash';
 
 const ENABLE_SEARCH_GROUNDING = false;
 
