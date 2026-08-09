@@ -1,0 +1,20 @@
+{
+  "name": "dkai-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gemini-only backend API for the DK AI assistant on Dipesh Kharel's portfolio",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@google/genai": "^2.16.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
