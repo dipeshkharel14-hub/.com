@@ -263,7 +263,7 @@ function createChatSession(history, grounded) {
     history,
     config: {
       systemInstruction: DKAI_SYSTEM_PROMPT,
-      maxOutputTokens: 900,
+      maxOutputTokens: 64000,
       temperature: 0.75,
       tools: grounded ? [{ googleSearch: {} }] : undefined
     }
