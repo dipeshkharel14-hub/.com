@@ -1,0 +1,21 @@
+# Exported from Render on 2026-08-09T03:51:44Z
+version: "1"
+projects:
+- name: My project
+  environments:
+  - name: GEMINI_API_KEY
+    services:
+    - type: web
+      name: .com-1
+      runtime: node
+      repo: https://github.com/dipeshkharel14-hub/.com
+      plan: free
+      envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      region: singapore
+      buildCommand: yarn install
+      startCommand: node server.js
+      autoDeployTrigger: commit
