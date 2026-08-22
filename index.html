@@ -2557,10 +2557,10 @@ document.querySelectorAll('.modal').forEach(function (m) {
 // ══════════════════════════════════════════════
 var _bearSequenceActive = {};
 var _bearErrorResponses = [
-    "⚠️ Hmm, that doesn't seem quite right...",
-    "🔒 Key mismatch! Mind checking again?",
-    "🧐 That combination isn't in my records.",
-    "❌ Close! Give it another try."
+    "⚠️ Hmm, that doesn't seem quite right...its not for you😡",
+    "🔒 Key mismatch! Mind checking again? if you dont have password dont tap it",
+    "🧐 That combination isn't in my records. may be this is not for you",
+    "❌ Close! Give it another try only if dipesh have given you password."
 ];
 
 function bearEl(p, name) { return document.getElementById(p + name); }
@@ -2688,7 +2688,7 @@ document.getElementById('authPhone').addEventListener('blur', function () {
 function verifyAccess() {
     var name = document.getElementById('authName').value.trim();
     var phone = document.getElementById('authPhone').value.trim();
-    if (name === "Dipesh Kharel" && phone === "100") {
+    if (name === "Dipesh Kharel" && phone === "9860469218") {
         bearShowSuccess('sp', "✨ Identity verified! Redirecting...");
         setTimeout(function () {
             window.location.href = "https://dipeshkharel14-hub.github.io/Something-to-say/";
