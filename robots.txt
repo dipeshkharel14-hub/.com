@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.dipeshkharel14.com.np/sitemap.xml
+
+# AI / LLM crawlers may read the site summary at /llms.txt

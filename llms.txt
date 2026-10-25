@@ -1,0 +1,63 @@
+# Dipesh Kharel (Hsepid)
+
+> Dipesh Kharel, also known online as Hsepid, is a Nepali founder, developer, writer, composer and photographer based in Kathmandu, Nepal. He is Founder & CEO of NEXUS and Aivoke.Ai and a Grade 12 Science student at Cosmic International Academy. This site is his personal portfolio: software projects, a blog, art, original music, photography, vlogs and an on-page AI assistant (DK AI).
+
+Canonical site: https://www.dipeshkharel14.com.np/ (also: khareldipesh.com.np)
+Contact: dipeshkharel144@gmail.com
+Updated: 2026-10-25
+Note: the site is a single page. Blog, Music and Photography open as overlays from the "My Collections" wheel and can be linked with #blog, #music and #photography.
+
+## About
+- [Home / portfolio](https://www.dipeshkharel14.com.np/): biography, projects, collections, contact
+- [YouTube](https://www.youtube.com/@DipeshKharel14): Dipesh Kharel's channel
+- [Instagram](https://www.instagram.com/its_mr_hsepid): @its_mr_hsepid
+- hsepid.np: another web presence of Dipesh Kharel (link to be announced)
+
+## Flagship projects
+- [NEXUS](https://nexus144.vercel.app): AI-powered education platform
+- [Aivoke.Ai](https://aivokeai.vercel.app): AI assistant and automation platform
+- [Personal AI](https://personal-ai14.vercel.app): personal AI chat assistant
+- [Gita Prabhav](https://gita-prabhav14.vercel.app): devotional site themed around the Bhagavad Gita
+- [Shreekunja Optical](https://shreekunja-optical.vercel.app): catalog and billing site for an optical shop
+- [BANTBHA](https://bantbha.vercel.app): community utility web app
+
+## Other projects
+- [Ghost Detector](https://dipeshkharel14-hub.github.io/Ghost-detector-/): anomaly "ghost" detection demo
+- [Lens Simulation](https://dipeshkharel14-hub.github.io/Lens-simulator-/): interactive optics and lens simulator
+- [Project Gesture](https://dipeshkharel14-hub.github.io/Gesture/): gesture-based interaction demo
+- [Hacking Screen](https://dipeshkharel14-hub.github.io/open_system/): simulated hacking-terminal interface
+- [Pashu Bali](https://dipeshkharel14-hub.github.io/Pashu-bali/): awareness project on animal sacrifice
+- [Character.ai](https://dipeshkharel14-hub.github.io/Character.ai/): custom AI character chat experience
+
+## Writing and books
+- [Caste System and Human Consciousness](https://www.dipeshkharel14.com.np/Cast%20discrimination%20conceptual%20book%20by%20dipesh.pdf): social commentary on caste-based discrimination in Nepal, legal remedies and the path to equality (PDF, 2026)
+- Wave of Human Life: book in progress by Dipesh Kharel
+- Blog: https://www.dipeshkharel14.com.np/#blog
+
+## Music
+- "Meri Mayalu": original song composed by Dipesh Kharel ([listen on YouTube](https://youtu.be/92mDPMZOhgw), also at https://www.dipeshkharel14.com.np/#music)
+
+## Photography
+Photographs by Dipesh Kharel, taken across Nepal (Kavre, Dhading, Bhaktapur, Kathmandu and more). Gallery: https://www.dipeshkharel14.com.np/#photography
+- Nepali women: nepali local vlogger with doko and selfie stick in village (Nepal, 2026-09-20)
+- Sunset view: beautiful sunset view from mountain (Kavre,Nepal, 2026-09-20)
+- Supernova: royal enfield at mountain during sunset (kavre,Nepal, 2026-09-24)
+- 300+year old tree: Kharel cast god(kuladevta) is located in the root of this tree (timal,nepal, 2026-09-22)
+- Naransthan temple: located in Kavre (Nepal, 2026-09-23)
+- Bauddha and Swyambhu: mini version located in Naransthan temple (Kavre, 2026-09-23)
+- Beautiful hills: view of hills and mountains during day time (kaklin,nepal, 2026-09-09)
+- Making Nepali swing: photp clicked during making nepali swing (kuruwas,Nepal, 2026-09-24)
+- Sun rays: raw image of sun and its rays (Dhading,Nepal, 2026-09-26)
+- Buddhist flag: late day time (rosaiba,nepal, 2026-09-02)
+- College night view: night iew of kathmandu and bhaktapur (ithuli, 2026-05-21)
+- Cat: cat sleeping peacefully (Nepal, 2026-06-23)
+- Waterfall: i captured this image while studying or visiting mystrical waterfall. whole journey is in my vlog section (Bagmati,Nepal, 2025-03-09)
+- Night view: night view of BKT (bhaktapur, 2024-09-11)
+
+## Art, vlogs and certificates
+- Art: paintings, portraits and a personal photo in the Collections section
+- Vlogs: personal and village vlogs (for example "Dashain Swing", 2026)
+- Certificates: NASA NGRST Pixel Adoption Certificate and a NASA commemorative boarding pass
+
+## Optional
+- [Sitemap](https://www.dipeshkharel14.com.np/sitemap.xml)
